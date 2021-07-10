@@ -1,7 +1,9 @@
 package com.wilembergson.minhasFinancas.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -10,6 +12,8 @@ import java.util.Objects;
 @Table(name="usuario", schema="financas")
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
 
     @Id
