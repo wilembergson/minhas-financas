@@ -1,11 +1,15 @@
 package com.wilembergson.minhasFinancas.service.impl;
 
+import com.wilembergson.minhasFinancas.exceptions.ErroAutenticacao;
 import com.wilembergson.minhasFinancas.exceptions.RegraNegocioException;
 import com.wilembergson.minhasFinancas.model.entity.Usuario;
 import com.wilembergson.minhasFinancas.model.repository.UsuarioRepository;
 import com.wilembergson.minhasFinancas.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -19,12 +23,24 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario autenticar(String email, String senha) {
-        return null;
+        Optional<Usuario> usuario = repository.findByEmail(email);
+
+        if(!usuario.isPresent()){
+            throw new ErroAutenticacao("Usuario não encontrado para o email informado.");
+        }
+
+        if(!usuario.get().getSenha().equals(senha)){
+            throw new ErroAutenticacao("Senha inválida.");
+        }
+
+        return usuario.get();
     }
 
     @Override
+    @Transactional
     public Usuario salvarUsuario(Usuario usuario) {
-        return null;
+        validarEmail(usuario.getEmail());
+        return repository.save(usuario);
     }
 
     @Override
