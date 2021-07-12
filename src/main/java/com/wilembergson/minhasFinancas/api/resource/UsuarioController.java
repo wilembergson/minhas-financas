@@ -1,6 +1,7 @@
 package com.wilembergson.minhasFinancas.api.resource;
 
 import com.wilembergson.minhasFinancas.api.dto.UsuarioDTO;
+import com.wilembergson.minhasFinancas.exceptions.ErroAutenticacao;
 import com.wilembergson.minhasFinancas.exceptions.RegraNegocioException;
 import com.wilembergson.minhasFinancas.model.entity.Usuario;
 import com.wilembergson.minhasFinancas.service.UsuarioService;
@@ -19,6 +20,16 @@ public class UsuarioController {
 
     public UsuarioController(UsuarioService service){
         this.service = service;
+    }
+
+    @PostMapping("/autenticar")
+    public ResponseEntity autenticar(@RequestBody UsuarioDTO dto){
+        try{
+            Usuario usuarioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
+            return ResponseEntity.ok(usuarioAutenticado);
+        }catch (ErroAutenticacao e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping
