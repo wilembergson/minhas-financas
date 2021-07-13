@@ -3,6 +3,7 @@ package com.wilembergson.minhasFinancas.service.impl;
 import com.wilembergson.minhasFinancas.exceptions.RegraNegocioException;
 import com.wilembergson.minhasFinancas.model.entity.Lancamento;
 import com.wilembergson.minhasFinancas.model.enums.StatusLancamento;
+import com.wilembergson.minhasFinancas.model.enums.TipoLancamento;
 import com.wilembergson.minhasFinancas.model.repository.LancamentoRepository;
 import com.wilembergson.minhasFinancas.service.LancamentoService;
 import org.springframework.data.domain.Example;
@@ -91,5 +92,21 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     public Optional<Lancamento> obterPorId(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public BigDecimal obterSaldoPorUsuario(Long id) {
+        BigDecimal receitas = repository.obterSaldoPorTipoEUsuario(id, TipoLancamento.RECEITA);
+        BigDecimal despesas = repository.obterSaldoPorTipoEUsuario(id, TipoLancamento.DESPESA);
+
+        if(receitas == null){
+            receitas = BigDecimal.ZERO;
+        }
+
+        if(despesas == null){
+            despesas = BigDecimal.ZERO;
+        }
+        return receitas.subtract(despesas);
     }
 }
