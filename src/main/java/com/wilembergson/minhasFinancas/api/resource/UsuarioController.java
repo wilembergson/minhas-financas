@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,6 +22,11 @@ public class UsuarioController {
 
     private final UsuarioService service;
     private final LancamentoService lancamentoService;
+
+    @GetMapping("/listarUsuarios")
+    public List<Usuario> listarTodos(){
+        return service.listarUsuarios();
+    }
 
     @PostMapping("/autenticar")
     public ResponseEntity autenticar(@RequestBody UsuarioDTO dto){
