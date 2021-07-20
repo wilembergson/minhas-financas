@@ -104,11 +104,11 @@ public class LancamentoController {
     @GetMapping("/{id}")
     public ResponseEntity obterLancamento(@PathVariable("id") Long id){
         return service.obterPorId(id)
-                    .map(lancamento -> new ResponseEntity(converter(lancamento),HttpStatus.OK))
+                    .map(lancamento -> new ResponseEntity(converterParaDTO(lancamento),HttpStatus.OK))
                     .orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
     }
 
-    private LancamentoDTO converter(Lancamento lancamento){
+    private LancamentoDTO converterParaDTO(Lancamento lancamento){
         return LancamentoDTO.builder()
                             .id(lancamento.getId())
                             .descricao(lancamento.getDescricao())
