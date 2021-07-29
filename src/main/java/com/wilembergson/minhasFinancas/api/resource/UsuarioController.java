@@ -9,6 +9,7 @@ import com.wilembergson.minhasFinancas.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class UsuarioController {
 
     private final UsuarioService service;
     private final LancamentoService lancamentoService;
+    private final PasswordEncoder encoder;
 
     @GetMapping("/listarUsuarios")
     public List<Usuario> listarTodos(){
@@ -44,10 +46,11 @@ public class UsuarioController {
         Usuario usuario = Usuario.builder()
                                 .nome(dto.getNome())
                                 .email(dto.getEmail())
-                                .senha(dto.getSenha())
+                                .senha(encoder.encode(dto.getSenha()))
                                 .build();
         try{
             Usuario usuarioSalvo = service.salvarUsuario(usuario);
+
             return new ResponseEntity(usuarioSalvo, HttpStatus.CREATED);
         }catch (RegraNegocioException e){
             return ResponseEntity.badRequest().body(e.getMessage());

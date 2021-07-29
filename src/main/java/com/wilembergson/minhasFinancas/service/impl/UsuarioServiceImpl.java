@@ -6,6 +6,7 @@ import com.wilembergson.minhasFinancas.model.entity.Usuario;
 import com.wilembergson.minhasFinancas.model.repository.UsuarioRepository;
 import com.wilembergson.minhasFinancas.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private UsuarioRepository repository;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public UsuarioServiceImpl(UsuarioRepository repository) {
+    public UsuarioServiceImpl(UsuarioRepository repository, PasswordEncoder encoder) {
         this.repository = repository;
+        this.encoder = encoder;
     }
 
     @Override
@@ -30,11 +33,14 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ErroAutenticacao("Usuario não encontrado para o email informado.");
         }
 
-        if(!usuario.get().getSenha().equals(senha)){
-            throw new ErroAutenticacao("Senha inválida.");
-        }
+        Usuario usuarioSalvar = usuario.get();
+        boolean valid = encoder.matches(senha, usuarioSalvar.getSenha());
 
-        return usuario.get();
+        if(valid){
+            return usuarioSalvar;
+        }else{
+            throw new ErroAutenticacao(("Senha inválida."));
+        }
     }
 
     @Override
